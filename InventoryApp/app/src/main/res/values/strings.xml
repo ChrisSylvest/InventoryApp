@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Inventory App</string>
+    <string name="detail_update_quantity_failed">Error updating quantity</string>
+    <string name="delete_dialog_msg">Delete this product?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="detail_delete_product_failed">Error deleting product</string>
+    <string name="detail_delete_product_success">Product deleted</string>
+    <string name="create_product_failed">Error saving product</string>
+    <string name="create_product_success">Product saved</string>
+</resources>
