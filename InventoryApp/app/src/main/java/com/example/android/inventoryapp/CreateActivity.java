@@ -32,7 +32,7 @@ import static com.example.android.inventoryapp.data.InventoryProvider.LOG_TAG;
  * Created by Chris on 1/30/2018.
  */
 
-public class CreateActivity extends AppCompatActivity  {
+public class CreateActivity extends AppCompatActivity {
 
     private static final int EXISTING_INVENTORY_LOADER = 0;
     private Uri mCurrentProductUri;
@@ -50,7 +50,6 @@ public class CreateActivity extends AppCompatActivity  {
         setContentView(R.layout.activity_create);
 
 
-
         Intent intent = getIntent();
         mCurrentProductUri = intent.getData();
         mNameEditText = (EditText) findViewById(R.id.edit_name);
@@ -62,7 +61,6 @@ public class CreateActivity extends AppCompatActivity  {
         saveButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 saveProduct();
-                finish();
             }
         });
 
@@ -96,30 +94,27 @@ public class CreateActivity extends AppCompatActivity  {
     }
 
 
-
-
     private void saveProduct() {
-        String nameString = mNameEditText.getText().toString().trim();
-        String quantityString = mQuantityEditText.getText().toString().trim();
-        String priceString = mPriceEditText.getText().toString().trim();
-        String emailString = mEmailEditText.getText().toString().trim();
-        String imageUri = mPicturePath.toString();
+        if (mPicturePath != null && mNameEditText != null && mQuantityEditText != null &&
+                mPriceEditText != null && mEmailEditText != null) {
+            String nameString = mNameEditText.getText().toString().trim();
+            String quantityString = mQuantityEditText.getText().toString().trim();
+            String priceString = mPriceEditText.getText().toString().trim();
+            String emailString = mEmailEditText.getText().toString().trim();
+            String imageUri = mPicturePath.toString();
 
 
+            ContentValues values = new ContentValues();
+            values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
+            int quantity = 0;
+            if (!TextUtils.isEmpty(quantityString)) {
+                quantity = Integer.parseInt(quantityString);
+            }
+            values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+            values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_PRICE, priceString);
+            values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL, emailString);
+            values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_IMAGE, imageUri);
 
-        ContentValues values = new ContentValues();
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_NAME, nameString);
-        int quantity = 0;
-        if (!TextUtils.isEmpty(quantityString)) {
-            quantity = Integer.parseInt(quantityString);
-        }
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_QUANTITY, quantity);
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_PRICE, priceString);
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL, emailString);
-        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_IMAGE, imageUri);
-
-
-        if (mCurrentProductUri == null) {
             Uri newUri = getContentResolver().insert(InventoryContract.InventoryEntry.CONTENT_URI,
                     values);
             if (newUri == null) {
@@ -129,7 +124,12 @@ public class CreateActivity extends AppCompatActivity  {
                 Toast.makeText(this, getString(R.string.create_product_success),
                         Toast.LENGTH_SHORT).show();
             }
+        } else {
+            Toast.makeText(this, getString(R.string.all_fields_required), Toast.LENGTH_SHORT).show();
+            return;
         }
     }
-
 }
+
+
+
