@@ -13,12 +13,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.example.android.inventoryapp.data.DetailActivity;
 import com.example.android.inventoryapp.data.InventoryContract;
 
 import static android.R.attr.id;
+import static android.R.attr.onClick;
 
 public class CatalogActivity extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
@@ -36,6 +38,8 @@ public class CatalogActivity extends AppCompatActivity implements
 
         mCursorAdapter = new InventoryCursorAdapter(this, null);
         inventoryListView.setAdapter(mCursorAdapter);
+
+
 
         inventoryListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
