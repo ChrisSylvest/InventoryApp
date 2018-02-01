@@ -14,7 +14,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.example.android.inventoryapp.data.DetailActivity;
 import com.example.android.inventoryapp.data.InventoryContract;
@@ -33,9 +35,7 @@ public class CatalogActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
-
-        ListView inventoryListView = (ListView) findViewById(R.id.list);
-
+        final ListView inventoryListView = (ListView) findViewById(R.id.list);
         mCursorAdapter = new InventoryCursorAdapter(this, null);
         inventoryListView.setAdapter(mCursorAdapter);
 

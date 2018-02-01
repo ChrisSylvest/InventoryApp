@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/list_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -33,6 +34,7 @@
         android:id="@+id/sale_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="sale"/>
+        android:text="sale"
+        android:focusable="false"/>
 
 </LinearLayout>
