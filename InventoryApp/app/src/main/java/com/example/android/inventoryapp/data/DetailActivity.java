@@ -1,19 +1,22 @@
 package com.example.android.inventoryapp.data;
 
 import android.app.AlertDialog;
+import android.app.LoaderManager;
 import android.content.ContentValues;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.android.inventoryapp.R;
@@ -23,7 +26,7 @@ import com.example.android.inventoryapp.R;
  */
 
 public class DetailActivity extends AppCompatActivity implements
-        LoaderManager.LoaderCallbacks {
+        LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int INVENTORY_LOADER = 0;
 
@@ -32,6 +35,8 @@ public class DetailActivity extends AppCompatActivity implements
     private TextView mQuantityText;
 
     private TextView mEmailText;
+
+    private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,7 @@ public class DetailActivity extends AppCompatActivity implements
         mCurrentProductUri = intent.getData();
         mQuantityText = (TextView) findViewById(R.id.detail_quantity);
         mEmailText = (TextView) findViewById(R.id.detail_provider_email);
+        mImageView = (ImageView) findViewById(R.id.detail_product_image);
 
         Button deleteButton = (Button) findViewById(R.id.delete_button);
         deleteButton.setOnClickListener(new View.OnClickListener() {
@@ -82,34 +88,45 @@ public class DetailActivity extends AppCompatActivity implements
         if (rowsAffected == 0) {
             Toast.makeText(this, getString(R.string.detail_update_quantity_failed),
                     Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, getString(R.string.detail_update_quantity_success),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     private void incrementQuantity() {
+        ContentValues values = new ContentValues();
         String quantityString = mQuantityText.getText().toString().trim();
         int quantity = 0;
         if (!TextUtils.isEmpty(quantityString)) {
             quantity = Integer.parseInt(quantityString) + 1;
         }
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+        int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
     }
 
     private void decrementQuantity() {
+        ContentValues values = new ContentValues();
         String quantityString = mQuantityText.getText().toString().trim();
         int quantity = 0;
         if (!TextUtils.isEmpty(quantityString)) {
             quantity = Integer.parseInt(quantityString) - 1;
         }
+        values.put(InventoryContract.InventoryEntry.COLUMN_PRODUCT_QUANTITY, quantity);
+        int rowsAffected = getContentResolver().update(mCurrentProductUri, values, null, null);
     }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] projection = {
                 InventoryContract.InventoryEntry._ID,
-                InventoryContract.InventoryEntry.COLUMN_PRODUCT_QUANTITY};
+                InventoryContract.InventoryEntry.COLUMN_PRODUCT_QUANTITY,
+                InventoryContract.InventoryEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL,
+                InventoryContract.InventoryEntry.COLUMN_PRODUCT_IMAGE};
 
 
         return new CursorLoader(this,
-                InventoryContract.InventoryEntry.CONTENT_URI,
+                mCurrentProductUri,
                 projection,
                 null,
                 null,
@@ -125,10 +142,21 @@ public class DetailActivity extends AppCompatActivity implements
         if (cursor.moveToFirst()) {
             int quantityColumnIndex =
                     cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_QUANTITY);
+            int emailColumnIndex =
+                    cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_SUPPLIER_EMAIL);
+            int imageColumnIndex =
+                    cursor.getColumnIndex(InventoryContract.InventoryEntry.COLUMN_PRODUCT_IMAGE);
 
             int quantity = cursor.getInt(quantityColumnIndex);
+            String email = cursor.getString(emailColumnIndex);
+            String image = cursor.getString(imageColumnIndex);
 
             mQuantityText.setText(Integer.toString(quantity));
+            mEmailText.setText(email);
+            Bitmap bmImage = BitmapFactory.decodeFile(image);
+            mImageView.setImageBitmap(bmImage);
+
+
         }
     }
 
